@@ -1,0 +1,57 @@
+.brand img{width:30px;height:30px;object-fit:contain}.brand-eaglesoft,.brand-modulos,.brand-wareline,.brand-suporte{background:#f8f8fb}.brand-onedrive,.brand-word,.brand-outlook{background:#edf3ff}.brand-excel{background:#eaf6ef}.brand-powerpoint{background:#fff0ea}.brand-teams,.brand-notificacao{background:#edf6fc}.links-list .card-bottom{margin-right:35px}.sidebar .logo small{letter-spacing:1.1px}.help-dialog{margin:auto}
+.sidebar{padding-top:25px}
+.sidebar-header{display:flex;align-items:center;gap:8px;margin:0 -8px}
+.sidebar-header .sidebar-toggle{width:36px;height:36px;border-radius:50%;flex-shrink:0;color:#85818f}
+.sidebar-header .logo{padding:0;gap:7px;font-size:19px;letter-spacing:-.7px}
+.sidebar-header .logo-symbol{width:31px;height:31px;border-radius:9px}
+.sidebar-header .logo small{font-size:6px;letter-spacing:.7px}
+.sidebar-hidden .sidebar{display:flex;width:96px;padding:25px 8px 0;box-shadow:none}
+.sidebar-hidden .workspace,.sidebar-hidden .nav-label,.sidebar-hidden .logo{display:none}
+.sidebar-hidden .sidebar-header{justify-content:center;margin:0 0 22px}
+.sidebar-hidden .nav-item{flex-direction:column;justify-content:center;gap:9px;padding:15px 4px;border-radius:9px;font-size:10px}
+.sidebar-hidden .nav-item svg{width:23px;height:23px}
+.sidebar-hidden .nav-item .count{display:none}
+.sidebar-hidden .main-shell{margin-left:96px}
+@media(max-width:1180px){.sidebar-header{gap:5px}.sidebar-header .logo{font-size:17px}.sidebar-header .logo-symbol{width:27px;height:27px}}
+@media(max-width:900px){.sidebar-header .logo{font-size:15px}.sidebar-header .logo-symbol{display:none}.sidebar-header .logo small{font-size:5px}}
+@media(max-width:650px){.sidebar{display:flex;box-shadow:0 0 0 100vw #14384c50}.main-shell{margin-left:96px}.sidebar-hidden .sidebar{box-shadow:none}.sidebar-hidden .main-shell{margin-left:96px}}
+:root{background:#f5f9fc;--accent:#0878b9}
+.sidebar-header .donato-logo{gap:8px;color:var(--accent);font-weight:500;font-size:20px;letter-spacing:2px}
+.donato-logo>img{width:48px;height:32px;object-fit:contain;flex-shrink:0}
+.sidebar-header .donato-logo small{color:var(--accent);font-size:6px;letter-spacing:1.05px;font-weight:500;white-space:nowrap}
+.tag-trabalho{background:#e8f3fb;color:#4388af}
+.collection-title>span{background:#e8f0f6;color:#7e9aae}
+.sidebar-header .sidebar-toggle:hover{background:#e8f3fb;color:var(--accent)}
+.nav-item:hover{background:#f0f7fc}
+.search-box{border-color:#dce8f0}
+.category-pills button{border-color:#dce8f0;background:#f8fbfd}
+.status-bar{background:#f8fbfd;border-color:#e2ebf2}
+@media(max-width:1180px){.sidebar-header .donato-logo{font-size:18px;letter-spacing:1.6px}.donato-logo>img{width:40px;height:29px}.sidebar-header .donato-logo small{font-size:5px;letter-spacing:.9px}}
+@media(max-width:900px){.sidebar-header .donato-logo{font-size:15px;letter-spacing:1px}.donato-logo>img{width:32px;height:24px}.sidebar-header .donato-logo small{font-size:4px;letter-spacing:.7px}}
+.card-body::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:1;cursor:pointer}
+.card-actions,.open-card{position:relative;z-index:2}
+.card-body:focus-visible{outline:none}
+.card-body:focus-visible::after{outline:2px solid var(--accent);outline-offset:3px}
+.links-grid .link-card{padding:16px 16px 12px}
+.links-grid .brand{width:40px;height:40px;border-radius:10px}
+.links-grid .brand img{width:27px;height:27px}
+.links-grid .card-top{margin-bottom:14px}
+.links-grid .card-body{margin-bottom:16px}
+.links-grid .card-body p{min-height:30px}
+@media(max-width:650px){.links-grid .link-card{padding:12px}.links-grid .card-body{margin-bottom:13px}}
+.collection-toolbar{margin-top:19px;align-items:center}
+.collection-toolbar .category-pills{margin:0}
+.nav-item>svg{flex-shrink:0}
+.nav-text{min-width:0;line-height:1.4}
+.sidebar-hidden .nav-text{max-width:100%;font-size:10px;overflow-wrap:normal;word-break:normal;text-align:center}
+.links-list .card-bottom{width:190px}
+.card-bottom .tag{min-width:0;max-width:calc(100% - 24px);white-space:normal}
+@media(max-width:650px){.links-list .card-bottom{width:auto}.links-list .tag{max-width:95px;white-space:normal}}
+.app:not(.sidebar-hidden) .sidebar{width:244px}
+.app:not(.sidebar-hidden) .main-shell{margin-left:244px}
+.sidebar .nav-item{gap:8px;padding-left:10px;padding-right:10px}
+.nav-text{white-space:nowrap}
+.sidebar-hidden .nav-text{white-space:normal}
+@media(max-width:650px){.app:not(.sidebar-hidden) .main-shell{margin-left:96px}}
+.sidebar-hidden .nav-item{padding-left:4px;padding-right:4px}
+.app:not(.sidebar-hidden) .sidebar>.nav-label{margin-top:32px}

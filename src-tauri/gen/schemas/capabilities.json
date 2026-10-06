@@ -1,0 +1,1 @@
+{"default":{"identifier":"default","description":"Abrir os links de trabalho no navegador padrão.","local":true,"windows":["main"],"permissions":["core:default","opener:default","core:window:allow-is-fullscreen","core:window:allow-set-fullscreen"]}}

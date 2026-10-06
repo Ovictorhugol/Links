@@ -1,0 +1,57 @@
+{
+  "excel": {
+    "source": "https://res.cdn.office.net/files/fabric-cdn-prod_20230815.001/assets/brand-icons/product/png/excel_48x1.png",
+    "width": 48,
+    "height": 48
+  },
+  "outlook": {
+    "source": "https://res.cdn.office.net/files/fabric-cdn-prod_20230815.001/assets/brand-icons/product/png/outlook_48x1.png",
+    "width": 48,
+    "height": 48
+  },
+  "teams": {
+    "source": "https://res.cdn.office.net/files/fabric-cdn-prod_20230815.001/assets/brand-icons/product/png/teams_48x1.png",
+    "width": 48,
+    "height": 48
+  },
+  "word": {
+    "source": "https://res.cdn.office.net/files/fabric-cdn-prod_20230815.001/assets/brand-icons/product/png/word_48x1.png",
+    "width": 48,
+    "height": 48
+  },
+  "powerpoint": {
+    "source": "https://res.cdn.office.net/files/fabric-cdn-prod_20230815.001/assets/brand-icons/product/png/powerpoint_48x1.png",
+    "width": 48,
+    "height": 48
+  },
+  "onedrive": {
+    "source": "https://res.cdn.office.net/files/fabric-cdn-prod_20230815.001/assets/brand-icons/product/png/onedrive_48x1.png",
+    "width": 48,
+    "height": 48
+  },
+  "notificacao": {
+    "source": "https://ssl.gstatic.com/docs/doclist/images/mediatype/icon_1_form_x128.png",
+    "width": 128,
+    "height": 128
+  },
+  "modulos": {
+    "source": "https://www.google.com/s2/favicons?domain=conectew.com.br&sz=128",
+    "width": 128,
+    "height": 128
+  },
+  "eaglesoft": {
+    "source": "https://www.google.com/s2/favicons?domain=eaglesoft.com.br&sz=128",
+    "width": 128,
+    "height": 128
+  },
+  "wareline": {
+    "source": "https://www.google.com/s2/favicons?domain=wareline.com.br&sz=128",
+    "width": 55,
+    "height": 48
+  },
+  "suporte": {
+    "source": "https://www.google.com/s2/favicons?domain=donatoholhos.com.br&sz=128",
+    "width": 128,
+    "height": 128
+  }
+}
