@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Administração de links · DONATO</title><link rel="icon" href="/donato-eye.svg"><link rel="stylesheet" href="/admin/panel.css"></head>
+<body>
+  <section id="login-view" class="login-view">
+    <form id="login-form" class="login-card">
+      <img src="/donato-eye.svg" alt="Donato" width="64"><p class="eyebrow">DONATO · ADMINISTRAÇÃO</p>
+      <h1>Os links da equipe,<br>em um só lugar.</h1><p class="muted">Entre para gerenciar o catálogo de todas as máquinas.</p>
+      <label>Usuário<input name="username" autocomplete="username" required maxlength="64"></label>
+      <label>Senha<input name="password" type="password" autocomplete="current-password" required maxlength="256"></label>
+      <p id="login-error" class="error" role="alert"></p><button class="primary" type="submit">Entrar no painel</button>
+    </form>
+  </section>
+  <div id="panel-view" hidden>
+    <aside class="sidebar">
+      <a href="/admin/" class="brand"><img src="/donato-eye.svg" alt="" width="46"><span>DONATO<small>HOSPITAL DE OLHOS</small></span></a>
+      <p class="eyebrow">CATÁLOGO CORPORATIVO</p><button class="nav active" id="show-catalog" aria-label="Links da equipe"><span aria-hidden="true">◫</span> <span>Links da equipe</span></button><button class="nav" id="show-history" aria-label="Publicações"><span aria-hidden="true">◷</span> <span>Publicações</span></button>
+      <div class="sidebar-note"><strong>Uma publicação. Todas as máquinas.</strong><p>Os aplicativos recebem as mudanças ao abrir ou na consulta de hora em hora.</p></div>
+      <div class="account"><span id="account-name"></span><button id="logout" class="text-button">Sair</button></div>
+    </aside>
+    <main>
+      <header class="topbar"><span class="eyebrow">CENTRAL DE LINKS</span><span class="badge">PAINEL ADMINISTRADOR</span></header>
+      <section class="page-heading"><div><p class="eyebrow">ORGANIZE OS ACESSOS DA EQUIPE</p><h1>Links da equipe</h1><p class="muted">Prepare as mudanças e publique quando estiver tudo pronto.</p></div><button id="add-link" class="primary">+ Novo link</button></section>
+      <div id="notice" role="status" hidden></div>
+      <section class="stats"><article><span>Links no catálogo</span><strong id="link-count">—</strong></article><article><span>Categorias</span><strong id="category-count">—</strong></article><article><span>Versão publicada</span><strong id="published-version">—</strong></article></section>
+      <section class="publish-bar"><div><strong id="draft-status">Carregando catálogo…</strong><p id="draft-help">As máquinas continuam usando a última versão publicada.</p></div><div class="actions"><button id="reload" class="secondary">Recarregar</button><button id="save-draft" class="secondary" disabled>Salvar rascunho</button><button id="publish" class="primary" disabled>Publicar alterações</button></div></section>
+      <section id="catalog-section" class="collection"><div class="collection-tools"><label class="search"><span>⌕</span><input id="search" type="search" placeholder="Pesquisar nome, endereço ou categoria…" aria-label="Pesquisar links"></label><select id="category-filter" aria-label="Filtrar categoria"><option value="">Todas as categorias</option></select><button id="rename-category" class="secondary">Renomear categoria</button></div><div class="table-scroll"><table><thead><tr><th>Link</th><th>Categoria</th><th>Endereço</th><th class="align-right">Ações</th></tr></thead><tbody id="links-table"></tbody></table></div><p id="empty" class="empty" hidden>Nenhum link encontrado para essa pesquisa.</p></section>
+      <section id="history-section" class="collection" hidden><div class="history-heading"><h2>Histórico de publicações</h2><p class="muted">Restaurar uma versão cria um rascunho. As máquinas só recebem a mudança depois de publicar.</p></div><div id="history-list"></div></section>
+      <footer>Os links recebidos continuam visíveis nas máquinas mesmo sem conexão.</footer>
+    </main>
+  </div>
+  <dialog id="edit-dialog"><form id="edit-form"><div class="dialog-heading"><div><p class="eyebrow">CATÁLOGO DA EQUIPE</p><h2 id="edit-title">Novo link</h2></div><button type="button" class="close-dialog" aria-label="Fechar edição">×</button></div>
+    <div class="form-grid"><label>Nome<input name="name" required maxlength="120" placeholder="Ex.: Portal do colaborador"></label><label>Identificador<input name="id" required pattern="[a-z0-9][a-z0-9_-]{0,63}" maxlength="64" placeholder="portal-colaborador"><small>Permanece o mesmo após publicar, para preservar favoritos.</small></label></div>
+    <label>Endereço<input name="url" aria-label="Endereço" type="text" required maxlength="4096" placeholder="Site, O:\GERAL\arquivo.xlsx ou \\servidor\pasta"><small>Aceita sites, arquivos e pastas compartilhadas, incluindo file:///. Para sites sem prefixo, completamos https://www. Para acesso em todas as máquinas, prefira \\servidor\compartilhamento em vez da letra da unidade.</small></label><label>Descrição<textarea name="description" rows="2" maxlength="500" placeholder="Uma breve explicação do acesso"></textarea></label><label>Categoria<input name="category" aria-label="Categoria" list="categories" required maxlength="100" placeholder="Ex.: Trabalho"><datalist id="categories"></datalist><small>Você também pode digitar uma categoria nova.</small></label>
+    <label>Ícone<select id="icon-choice" name="icon" aria-label="Ícone"><option value="/donato-eye.svg">Símbolo Donato</option><option value="custom">Endereço HTTPS de uma imagem</option><option value="upload">Enviar imagem do computador</option></select></label><label id="icon-url-label" hidden>Endereço do ícone<input id="icon-url" type="url" placeholder="https://…"></label><label id="icon-file-label" hidden>Imagem (PNG, JPEG, WebP ou ICO, até 512 KB)<input id="icon-file" type="file" accept="image/png,image/jpeg,image/webp,image/x-icon,.ico"></label>
+    <div class="icon-preview"><img id="icon-preview" src="/donato-eye.svg" alt="Prévia do ícone"><span>O ícone também ficará disponível offline.</span></div><p id="edit-error" class="error" role="alert"></p><div class="dialog-footer"><button type="button" class="secondary close-dialog">Cancelar</button><button type="submit" class="primary">Aplicar ao rascunho</button></div>
+  </form></dialog>
+  <dialog id="rename-dialog"><form id="rename-form"><h2>Renomear categoria</h2><label>Categoria atual<select id="old-category" required></select></label><label>Novo nome<input id="new-category" required maxlength="100"></label><p id="rename-error" class="error" role="alert"></p><div class="dialog-footer"><button type="button" class="secondary" id="cancel-rename">Cancelar</button><button class="primary" type="submit">Aplicar ao rascunho</button></div></form></dialog>
+  <dialog id="category-icon-dialog"><form id="category-icon-form"><h2>Ícones do menu lateral</h2>
+    <label>Item do menu<select id="menu-category" aria-label="Item do menu" required></select></label>
+    <label>Ícone do menu<select id="menu-icon-choice" aria-label="Ícone do menu"></select></label>
+    <label id="menu-icon-url-label" hidden>Endereço da imagem<input id="menu-icon-url" type="url" placeholder="https://…"></label>
+    <label id="menu-icon-file-label" hidden>Imagem (SVG, PNG, JPEG, WebP ou ICO, até 512 KB)<input id="menu-icon-file" type="file" accept="image/svg+xml,image/png,image/jpeg,image/webp,image/x-icon,.svg,.ico"></label>
+    <div class="icon-preview"><img id="menu-icon-preview" src="/donato-eye.svg" alt="Prévia do ícone do menu"><span>Os aplicativos recebem o ícone após publicar. Imagens SVG são convertidas automaticamente. A opção padrão restaura o símbolo original.</span></div>
+    <p id="menu-icon-error" class="error" role="alert"></p><div class="dialog-footer"><button type="button" class="secondary" id="cancel-menu-icon">Cancelar</button><button type="submit" class="primary">Aplicar ícone ao rascunho</button></div>
+  </form></dialog>
+  <script src="/admin/panel.js" type="module"></script>
+</body></html>

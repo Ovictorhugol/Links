@@ -5,3 +5,8 @@ src-tauri/target/
 test-results/
 playwright-report/
 release/
+server/data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+.env

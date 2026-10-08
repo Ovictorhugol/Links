@@ -1,29 +1,37 @@
-export type Category = 'Trabalho' | 'Ferramentas Microsoft';
-export type LinkItem = { id: string; name: string; description: string; url: string; category: Category; favorite: boolean; logo: string };
-export const initialLinks: LinkItem[] = [
-  {id:'eaglesoft',name:'EAGLESOFT',description:'Acesso ao sistema Eaglesoft.',url:'https://eaglesoft.com.br/login',category:'Trabalho',favorite:false,logo:'/logos/eaglesoft.png'},
-  {id:'onedrive',name:'ONEDRIVE',description:'Seus arquivos e documentos na nuvem.',url:'https://institutodonato1-my.sharepoint.com/',category:'Ferramentas Microsoft',favorite:false,logo:'/logos/onedrive.png'},
-  {id:'notificacao',name:'NOTIFICAÇÃO',description:'Formulário de notificações.',url:'https://docs.google.com/forms/d/1R-rHU_fResEN2FWSOqrXim0e1f6p4c1nh6-obrCUjEE/viewform?edit_requested=true',category:'Trabalho',favorite:false,logo:'/logos/notificacao.png'},
-  {id:'modulos',name:'MODULOS',description:'Acesso aos módulos ConecteW.',url:'https://modulos.conectew.com.br/',category:'Trabalho',favorite:false,logo:'/logos/modulos.png'},
-  {id:'word',name:'WORD',description:'Crie e edite seus documentos.',url:'https://office.live.com/start/Word.aspx?omkt=pt-BR',category:'Ferramentas Microsoft',favorite:false,logo:'/logos/word.png'},
-  {id:'wareline',name:'WARELINE WEB',description:'Sistema Wareline na rede local.',url:'https://dho.local.conectew.com.br/',category:'Trabalho',favorite:false,logo:'/logos/wareline.png'},
-  {id:'teams',name:'TEAMS',description:'Conversas, reuniões e colaboração.',url:'https://www.microsoft.com/pt-br/microsoft-teams/log-in',category:'Ferramentas Microsoft',favorite:false,logo:'/logos/teams.png'},
-  {id:'excel',name:'EXCEL',description:'Planilhas para organizar seu trabalho.',url:'https://office.live.com/start/Excel.aspx?ui=pt-BR',category:'Ferramentas Microsoft',favorite:false,logo:'/logos/excel.png'},
-  {id:'suporte',name:'SUPORTE TI',description:'Solicite ajuda à equipe de tecnologia.',url:'http://suporte.donatoholhos.com.br',category:'Trabalho',favorite:false,logo:'/logos/suporte.png'},
-  {id:'powerpoint',name:'POWER POINT',description:'Crie e apresente suas ideias.',url:'https://office.live.com/start/PowerPoint.aspx?omkt=pt-BR',category:'Ferramentas Microsoft',favorite:false,logo:'/logos/powerpoint.png'},
-  {id:'outlook',name:'OUTLOOK',description:'E-mails e comunicação da equipe.',url:'https://outlook.office365.com/mail/inbox',category:'Ferramentas Microsoft',favorite:false,logo:'/logos/outlook.png'},
-];
+import bundled from './catalog.initial.json';
+import { validateLinkAddress } from '../server/public/link-address.mjs';
+
+export type Category = string;
+export type LinkItem = { id: string; name: string; description: string; url: string; category: Category; logo: string };
+export type Catalog = { version: number; displayVersion?: number; links: LinkItem[]; categoryIcons?: Record<string,string> };
+export const initialCatalog: Catalog = bundled;
+export const initialLinks: LinkItem[] = bundled.links.map(item => ({...item}));
 export function normalize(value: string) { return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
-// Fixed catalog: storage keeps only order and favorites, never old names or URLs.
-export function readLinks(): LinkItem[] {
-  try {
-    const saved: unknown = JSON.parse(localStorage.getItem('centraldesk.work.preferences') || 'null');
-    if (Array.isArray(saved)) {
-      const remaining = new Map(initialLinks.map(item => [item.id,item]));
-      const ordered: LinkItem[] = [];
-      for (const preference of saved) { const item = remaining.get(preference?.id); if(item) { ordered.push({...item,favorite:preference.favorite === true}); remaining.delete(item.id); } }
-      return [...ordered,...remaining.values()];
+export function readLinks(catalog: Catalog = initialCatalog): LinkItem[] {
+  return catalog.links.map(item => ({...item}));
+}
+export function validateCatalog(value: unknown): Catalog {
+  const catalog = value as Catalog;
+  if (!catalog || !Number.isSafeInteger(catalog.version) || catalog.version < 1 || !Array.isArray(catalog.links) || catalog.links.length < 1 || catalog.links.length > 500) throw new Error('Catálogo inválido.');
+  if(catalog.displayVersion !== undefined && (!Number.isSafeInteger(catalog.displayVersion) || catalog.displayVersion < 0 || catalog.displayVersion > catalog.version))throw new Error('Contador de publicações inválido.');
+  const ids = new Set<string>();
+  for(const item of catalog.links) {
+    if(!item || typeof item.id !== 'string' || !/^[a-z0-9][a-z0-9_-]{0,63}$/.test(item.id) || ids.has(item.id)) throw new Error('Identificador de link inválido ou repetido.');
+    ids.add(item.id);
+    for(const field of ['name','description','category','url','logo'] as const) if(typeof item[field] !== 'string' || item[field].length > (field === 'logo' ? 1500000 : 4096)) throw new Error('Campo de link inválido.');
+    if(!item.name.trim() || !item.category.trim() || item.category === 'Todos') throw new Error('Nome e categoria são obrigatórios; Todos é uma categoria reservada.');
+    const url = new URL(item.url);
+    if(!['https:','http:','file:'].includes(url.protocol)) throw new Error('Endereço de link inválido.');
+    validateLinkAddress(item.url);
+    const localLogo = item.logo === '/donato-eye.svg' || initialCatalog.links.some(link => link.logo === item.logo);
+    if(!localLogo && !/^https:\/\//.test(item.logo) && !/^data:image\/(?:png|jpeg|webp|x-icon);base64,[A-Za-z0-9+/=]+$/.test(item.logo)) throw new Error('Ícone inválido.');
+  }
+  if(catalog.categoryIcons !== undefined) {
+    if(!catalog.categoryIcons || typeof catalog.categoryIcons !== 'object' || Array.isArray(catalog.categoryIcons) || Object.keys(catalog.categoryIcons).length > 501)throw new Error('Invalid category icons.');
+    for(const [name,logo] of Object.entries(catalog.categoryIcons)) {
+      if(!name.trim() || name.length > 4096 || ['__proto__','constructor','prototype'].includes(name))throw new Error('Invalid category name.');
+      validateCatalog({version:1,links:[{...initialLinks[0],logo}]});
     }
-  } catch { /* Keep the supplied catalog available when storage fails. */ }
-  return initialLinks.map(item => ({...item}));
+  }
+  return catalog;
 }

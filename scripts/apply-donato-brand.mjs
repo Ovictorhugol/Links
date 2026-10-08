@@ -20,5 +20,5 @@ await mkdir('public',{recursive:true});
 await copyFile('artifacts/donato-eye.svg','public/donato-eye.svg');
 const logo = await readFile('artifacts/donato-eye.svg','utf8');
 const paths = logo.slice(logo.indexOf('>')+1,logo.lastIndexOf('</svg>'));
-await writeFile('app-icon.svg',`<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 120 120"><g transform="translate(0 20)">${paths}</g></svg>\n`);
+await writeFile('app-icon.svg',`<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 120 120" fill="none"><g transform="translate(0 18)">${paths}</g></svg>\n`);
 console.log('Paleta azul Donato aplicada; SVG original copiado e centralizado para o ícone.');

@@ -1,0 +1,6 @@
+{
+  "origin": "https://links.suaempresa.com.br",
+  "host": "127.0.0.1",
+  "port": 3030,
+  "dbPath": "C:\\ProgramData\\DonatoLinksServer\\donato.sqlite"
+}

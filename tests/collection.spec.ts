@@ -22,12 +22,14 @@ test('catálogo novo substitui dados antigos, preserva URLs e carrega logos loca
   });
   await page.goto('/');
   await expect(page.locator('.link-card')).toHaveCount(11);
-  await expect(page.locator('.link-card h3')).toHaveText(expectedLinks.map(([name]) => name));
+  await expect(page.locator('.link-card h3')).toHaveText(expectedLinks.map(([name]) => name).sort((a,b) => a.localeCompare(b,'pt-BR')));
   await expect(page.locator('.category-pills button')).toHaveText(['Todos']);
   await expect(page.getByRole('navigation')).toHaveCount(1);
   await expect(page.getByRole('navigation').getByRole('button')).toHaveCount(3);
   await expect(page.getByRole('navigation')).toContainText('Trabalho');
   await expect(page.getByRole('button',{name:/Adicionar link|Um novo atalho|Editar atalho/})).toHaveCount(0);
+  await expect(page.getByRole('button',{name:/favoritos/i})).toHaveCount(0);
+  await expect(page.getByText('Arraste os cards para deixar tudo do seu jeito.')).toHaveCount(0);
   expect(await page.evaluate(() => localStorage.getItem('centraldesk.links'))).toBeNull();
   await expect(page.locator('.brand img')).toHaveCount(11);
   await expect.poll(() => page.locator('.brand img').evaluateAll(images => images.every(image => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
@@ -35,7 +37,7 @@ test('catálogo novo substitui dados antigos, preserva URLs e carrega logos loca
   expect(await page.evaluate(() => (window as any).openedUrls)).toEqual(expectedLinks.map(([,url]) => url));
 });
 
-test('pesquisa sem acentos, favoritos, Todos e visualização em lista',async ({page}) => {
+test('pesquisa sem acentos, Todos e visualização em lista',async ({page}) => {
   await page.goto('/');
   await expect(page.getByRole('textbox',{name:'Pesquisar atalhos'})).toBeVisible();
   await page.keyboard.press('Control+k');
@@ -44,34 +46,34 @@ test('pesquisa sem acentos, favoritos, Todos e visualização em lista',async ({
   await expect(page.locator('.link-card')).toHaveCount(1);
   await expect(page.locator('.link-card')).toContainText('NOTIFICAÇÃO');
   await page.getByRole('button',{name:'Limpar pesquisa'}).click();
-  await page.getByRole('button',{name:'Adicionar EAGLESOFT aos favoritos'}).click();
-  await expect(page.getByRole('button',{name:'Remover EAGLESOFT dos favoritos'})).toBeVisible();
   await page.getByRole('button',{name:'Visualização em lista'}).click();
   await expect(page.locator('.links-list')).toBeVisible();
   await page.locator('.category-pills').getByRole('button',{name:'Todos',exact:true}).click();
   await expect(page.locator('.link-card')).toHaveCount(11);
   await page.reload();
-  await expect(page.getByRole('button',{name:'Remover EAGLESOFT dos favoritos'})).toBeVisible();
   await page.getByRole('textbox',{name:'Pesquisar atalhos'}).fill('inexistente');
   await expect(page.getByText('Nenhum atalho por aqui')).toBeVisible();
   await page.getByRole('navigation').getByRole('button',{name:/Trabalho/}).click();
   await expect(page.locator('.link-card')).toHaveCount(5);
 });
 
-test('ordenação, arraste persistente e preferências não alteram o catálogo',async ({page}) => {
+test('ordem alfabética padrão ignora preferências antigas e remove ordem personalizada',async ({page}) => {
   await page.addInitScript(() => {
-    if(!localStorage.getItem('centraldesk.work.preferences'))localStorage.setItem('centraldesk.work.preferences',JSON.stringify([{id:'gmail',favorite:true},{id:'eaglesoft',url:'https://incorrect.example',name:'Alterado',favorite:true},null]));
+    localStorage.setItem('centraldesk.work.preferences',JSON.stringify([{id:'onedrive'},{id:'eaglesoft',url:'https://incorrect.example',name:'Alterado'},null]));
   });
   await page.goto('/');
-  await expect(page.locator('.link-card')).toHaveCount(11);
-  await expect(page.locator('.link-card').first()).toContainText('EAGLESOFT');
-  await page.getByLabel('Ordenar atalhos').selectOption('az');
-  await expect(page.locator('.link-card').nth(1)).toContainText('EXCEL');
-  await page.getByLabel('Ordenar atalhos').selectOption('manual');
-  await page.locator('.link-card').filter({has:page.getByRole('heading',{name:'EAGLESOFT',exact:true})}).dragTo(page.locator('.link-card').filter({has:page.getByRole('heading',{name:'NOTIFICAÇÃO',exact:true})}));
+  const names = expectedLinks.map(([name]) => name).sort((a,b) => a.localeCompare(b,'pt-BR'));
+  await expect(page.locator('.link-card h3')).toHaveText(names);
+  await expect(page.getByLabel('Ordenar atalhos')).toHaveValue('az');
+  await expect(page.getByLabel('Ordenar atalhos').locator('option')).toHaveText(['Nome: A–Z','Nome: Z–A']);
+  await expect(page.locator('.link-card[draggable="true"]')).toHaveCount(0);
+  await page.getByLabel('Ordenar atalhos').selectOption('za');
+  await expect(page.locator('.link-card h3')).toHaveText([...names].reverse());
+  await page.getByRole('button',{name:'Visualização em lista'}).click();
+  await expect(page.locator('.links-list h3')).toHaveText([...names].reverse());
   await page.reload();
-  await expect(page.locator('.link-card').first()).toContainText('ONEDRIVE');
-  await expect(page.getByRole('button',{name:'Remover EAGLESOFT dos favoritos'})).toBeVisible();
+  await expect(page.locator('.link-card h3')).toHaveText(names);
+  expect(await page.evaluate(() => localStorage.getItem('centraldesk.work.preferences'))).toBeNull();
 });
 
 test('layout responsivo e prévia sem erros',async ({page}) => {
@@ -86,7 +88,7 @@ test('layout responsivo e prévia sem erros',async ({page}) => {
   expect(errors).toEqual([]);
 });
 
-test('card inteiro abre uma vez e favorito funciona sem navegar',async ({page}) => {
+test('card inteiro abre uma vez e funciona por teclado e em lista',async ({page}) => {
   await page.addInitScript(() => {
     (window as any).openedUrls = [];
     window.open = ((url: string) => { (window as any).openedUrls.push(url);return null; }) as typeof window.open;
@@ -95,9 +97,6 @@ test('card inteiro abre uma vez e favorito funciona sem navegar',async ({page}) 
   const card = page.locator('.link-card').first();
   await card.click({position:{x:5,y:5}});
   expect(await page.evaluate(() => (window as any).openedUrls)).toEqual(['https://eaglesoft.com.br/login']);
-  await page.getByRole('button',{name:'Adicionar EAGLESOFT aos favoritos'}).click();
-  await expect(page.getByRole('button',{name:'Remover EAGLESOFT dos favoritos'})).toBeVisible();
-  expect(await page.evaluate(() => (window as any).openedUrls)).toHaveLength(1);
   await page.getByRole('link',{name:'Acessar EAGLESOFT',exact:true}).focus();
   await page.keyboard.press('Enter');
   expect(await page.evaluate(() => (window as any).openedUrls)).toHaveLength(2);
@@ -110,7 +109,7 @@ test('Ferramentas Microsoft agrupa seis links e funciona no menu compacto',async
   await page.goto('/');
   const microsoft = page.getByRole('navigation',{name:'Categorias'}).getByRole('button',{name:/Ferramentas Microsoft/});
   await microsoft.click();
-  await expect(page.locator('.link-card h3')).toHaveText(['ONEDRIVE','WORD','TEAMS','EXCEL','POWER POINT','OUTLOOK']);
+  await expect(page.locator('.link-card h3')).toHaveText(['EXCEL','ONEDRIVE','OUTLOOK','POWER POINT','TEAMS','WORD']);
   await expect(page.locator('.link-card .tag')).toHaveText(Array(6).fill('Ferramentas Microsoft'));
   await expect(microsoft).toHaveAttribute('aria-pressed','true');
   await page.getByRole('textbox',{name:'Pesquisar atalhos'}).fill('excel');
