@@ -33,7 +33,7 @@ if (-not $taskUpgradeFound) { throw 'Regra de atualização MSI não encontrada.
 $taskView = $taskNew.OpenView('SELECT `Icon_` FROM `Shortcut` WHERE `Shortcut` = ''ApplicationDesktopShortcut''')
 [void]$taskView.Execute()
 $taskRecord = $taskView.Fetch()
-if (-not $taskRecord -or $taskRecord.StringData(1) -ne 'ProductIcon') { throw 'O atalho da área de trabalho precisa usar o ícone do pacote.' }
+if (-not $taskRecord -or $taskRecord.StringData(1) -ne ('ProductIcon.' + $taskMetadata.ProductVersion)) { throw 'O atalho da área de trabalho precisa usar o ícone versionado do pacote.' }
 [void]$taskView.Close()
 $taskMetadata['UpgradeVerified'] = $true
 $taskMetadata['DesktopIconVerified'] = $true

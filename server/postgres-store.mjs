@@ -42,6 +42,10 @@ export async function openPostgresStore(config,seed = initialCatalog) {
     return {...current,displayVersion:publicCatalog.displayVersion ?? current.publishedVersion,links,categoryIcons,unpublished:JSON.stringify(links) !== JSON.stringify(publicCatalog.links) || JSON.stringify(categoryIcons) !== JSON.stringify(publicCatalog.categoryIcons || {})};
   }
   try {
+    if(config.initializeSchema === false) {
+      await state(pool);
+      await published(pool);
+    } else {
     await transaction(async client => {
       await lockInitialization(client);
       await client.query(`CREATE SCHEMA IF NOT EXISTS ${schema};
@@ -61,6 +65,7 @@ export async function openPostgresStore(config,seed = initialCatalog) {
         await client.query(`INSERT INTO ${schema}.releases VALUES ($1,$2,$3,$4)`,[seed.version,JSON.stringify({version:seed.version,links,categoryIcons:validateCategoryIcons(seed.categoryIcons)}),new Date().toISOString(),'Catálogo inicial']);
       }
     });
+    }
   } catch(error) {await pool.end();throw error;}
   async function save(links,revision,categoryIcons) {
     const validated = validateLinks(links);

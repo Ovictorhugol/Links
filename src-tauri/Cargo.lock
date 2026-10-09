@@ -448,7 +448,7 @@ dependencies = [
 
 [[package]]
 name = "centraldesk"
-version = "0.3.6"
+version = "0.3.7"
 dependencies = [
  "atomic-write-file",
  "base64 0.22.1",

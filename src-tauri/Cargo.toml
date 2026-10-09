@@ -1,6 +1,6 @@
 [package]
 name = "centraldesk"
-version = "0.3.6"
+version = "0.3.7"
 description = "Links úteis do Donato Hospital de Olhos"
 authors = ["Donato Hospital de Olhos"]
 edition = "2021"

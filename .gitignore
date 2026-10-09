@@ -4,6 +4,9 @@ src-tauri/target/
 *.local
 test-results/
 playwright-report/
+artifacts/*.png
+artifacts/*.jpg
+artifacts/*.jpeg
 release/
 server/data/
 *.sqlite

@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([string]$ExpectedVersion = '0.3.7')
 $ErrorActionPreference = 'Stop'
 $running = @(Get-Process -ErrorAction SilentlyContinue | Where-Object {
     $_.ProcessName -like '*DONATO*' -or $_.ProcessName -eq 'centraldesk'
@@ -45,7 +45,7 @@ try {
 } catch {} finally { $tcp.Dispose() }
 [PSCustomObject]@{
     Computer = $env:COMPUTERNAME
-    ExpectedVersion = '0.3.4'
+    ExpectedVersion = $ExpectedVersion
     LastBootTime = $(if ($bootEvent) { $bootEvent.TimeCreated } else { $null })
     Running = $running
     Installed = $installed

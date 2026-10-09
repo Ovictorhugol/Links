@@ -15,5 +15,6 @@ export function settings(env = process.env) {
   const postgres = {host:values.PGHOST,port:Number(values.PGPORT || 5432),database:values.PGDATABASE || 'linksdonato',user:values.PGUSER || 'postgres',password:values.PGPASSWORD,caPath:resolve(values.PGSSLROOTCERT || 'deployment/certificates/global-bundle.pem'),schema:values.DONATO_PG_SCHEMA || 'donato_links'};
   if(values.PGPASSWORD_FILE)postgres.password = readFileSync(resolve(values.PGPASSWORD_FILE),'utf8').replace(/[\r\n]+$/,'');
   if(engine === 'postgres' && (!postgres.host || !postgres.password || !Number.isInteger(postgres.port) || postgres.port < 1 || postgres.port > 65535 || !/^[a-z][a-z0-9_]{0,62}$/.test(postgres.schema)))throw new Error('Configure PGHOST, PGPASSWORD (ou PGPASSWORD_FILE), PGPORT e DONATO_PG_SCHEMA para o PostgreSQL.');
+  postgres.initializeSchema = values.DONATO_PG_INITIALIZE_SCHEMA !== '0';
   return {port,host:env.DONATO_HOST || '127.0.0.1',origin:origin.origin,secure:origin.protocol === 'https:',engine,postgres,dbPath:resolve(env.DONATO_DB_PATH || 'server/data/donato.sqlite')};
 }

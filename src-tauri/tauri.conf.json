@@ -2,7 +2,7 @@
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "LINKS ÚTEIS DONATO",
   "mainBinaryName": "LINKS ÚTEIS DONATO",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "identifier": "com.centraldesk.app",
   "build": {
     "beforeDevCommand": "npm run dev",
